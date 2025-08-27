@@ -6,7 +6,7 @@ engine = create_engine('sqlite:///movies.db')
 Session = sessionmaker(bind=engine)
 session = Session()
 
-# View all movies
+# see all movies
 movies = session.query(Movie).all()
 for movie in movies:
     print(f"Title: {movie.title}, Year: {movie.year}, Director: {movie.director.name}, Genre: {movie.genre.name}")

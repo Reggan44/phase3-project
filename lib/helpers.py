@@ -1,6 +1,6 @@
 from lib.models import Movie, Director, Genre, Actor
 
-# Movie CRUD
+# Movie CRUD functionality
 def create_movie(session, title, year, director, genre, actors):
 	movie = Movie(title=title, year=year, director=director, genre=genre, actors=actors)
 	session.add(movie)
@@ -34,7 +34,7 @@ def delete_movie(session, movie_id):
 		return True
 	return False
 
-# Director CRUD
+# Director CRUD functionulity
 def create_director(session, name):
 	director = Director(name=name)
 	session.add(director)
@@ -59,7 +59,7 @@ def delete_director(session, director_id):
 		return True
 	return False
 
-# Genre CRUD
+# Genre CRUD functionality
 def create_genre(session, name):
 	genre = Genre(name=name)
 	session.add(genre)
@@ -84,7 +84,7 @@ def delete_genre(session, genre_id):
 		return True
 	return False
 
-# Actor CRUD
+# Actor CRUD functionality
 def create_actor(session, name):
 	actor = Actor(name=name)
 	session.add(actor)

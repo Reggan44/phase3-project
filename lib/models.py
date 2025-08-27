@@ -5,7 +5,7 @@ from sqlalchemy.orm import relationship, declarative_base
 
 Base = declarative_base()
 
-# Association table for many-to-many relationship between Movie and Actor
+
 movie_actor = Table(
 	'movie_actor', Base.metadata,
 	Column('movie_id', Integer, ForeignKey('movies.id')),
