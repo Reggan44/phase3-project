@@ -1,3 +1,4 @@
+
 from lib.db.models import Movie, Director, Genre, Actor
 
 # Movie CRUD stuff
@@ -11,7 +12,7 @@ def get_all_movies(session):
 	return session.query(Movie).all()
 
 def update_movie(session, movie_id, title=None, year=None, director=None, genre=None, actors=None):
-	movie = session.query(Movie).get(movie_id)
+	movie = session.get(Movie, movie_id)
 	if movie:
 		if title is not None:
 			movie.title = title
@@ -27,7 +28,7 @@ def update_movie(session, movie_id, title=None, year=None, director=None, genre=
 	return movie
 
 def delete_movie(session, movie_id):
-	movie = session.query(Movie).get(movie_id)
+	movie = session.get(Movie, movie_id)
 	if movie:
 		session.delete(movie)
 		session.commit()
@@ -45,14 +46,14 @@ def get_all_directors(session):
 	return session.query(Director).all()
 
 def update_director(session, director_id, name=None):
-	director = session.query(Director).get(director_id)
+	director = session.get(Director, director_id)
 	if director and name is not None:
 		director.name = name
 		session.commit()
 	return director
 
 def delete_director(session, director_id):
-	director = session.query(Director).get(director_id)
+	director = session.get(Director, director_id)
 	if director:
 		session.delete(director)
 		session.commit()
@@ -62,3 +63,49 @@ def delete_director(session, director_id):
 # Genre CRUD stuff
 def create_genre(session, name):
 	genre = Genre(name=name)
+	session.add(genre)
+	session.commit()
+	return genre
+
+def get_all_genres(session):
+	return session.query(Genre).all()
+
+def update_genre(session, genre_id, name=None):
+	genre = session.get(Genre, genre_id)
+	if genre and name is not None:
+		genre.name = name
+		session.commit()
+	return genre
+
+def delete_genre(session, genre_id):
+	genre = session.get(Genre, genre_id)
+	if genre:
+		session.delete(genre)
+		session.commit()
+		return True
+	return False
+
+# Actor CRUD stuff
+def create_actor(session, name):
+	actor = Actor(name=name)
+	session.add(actor)
+	session.commit()
+	return actor
+
+def update_actor(session, actor_id, name=None):
+	actor = session.get(Actor, actor_id)
+	if actor and name is not None:
+		actor.name = name
+		session.commit()
+	return actor
+
+def delete_actor(session, actor_id):
+	actor = session.get(Actor, actor_id)
+	if actor:
+		session.delete(actor)
+		session.commit()
+		return True
+	return False
+
+def get_all_actors(session):
+	return session.query(Actor).all()

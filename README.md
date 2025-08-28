@@ -1,57 +1,67 @@
 # Phase 3 CLI Project Template
 # Movie Database CLI
 
+This project is a command-line interface (CLI) application for managing a movie database using Python, SQLAlchemy, and Alembic.
+
+## Features
+- Create, read, update, and delete movies, directors, genres, and actors
+- Relational database with 3+ related tables
+- Input validation and user-friendly prompts
+- Modular code structure for maintainability
+- Database migrations managed with Alembic
+- Seed script for initial data
+
 ## Usage
-
-This CLI application lets you manage a movie database with movies, directors, genres, and actors. You can list, create, update, and delete records interactively.
-
-To run the CLI:
-
-```bash
-python -m lib.cli
-```
-
-Follow the on-screen menu to select actions. Input is validated for correctness.
-
-## Main Functions
-
-- `main()`: The entry point for the CLI. Displays the menu, handles user input, and calls helper functions.
-- `helpers.py`: Contains CRUD functions for movies, directors, genres, and actors. Each function interacts with the database using SQLAlchemy ORM.
-    - `create_movie`, `get_all_movies`, `update_movie`, `delete_movie`
-    - `create_director`, `get_all_directors`, `update_director`, `delete_director`
-    - Similar functions for genres and actors
-- `models.py`: Defines the SQLAlchemy ORM models and relationships for Movie, Director, Genre, and Actor.
-- `database.py`: Initializes the SQLite database and creates tables.
+1. Install dependencies:
+   ```bash
+   pipenv install
+   pipenv shell
+   ```
+2. Run the CLI:
+   ```bash
+   python -m lib.cli
+   ```
+3. Follow the menu prompts to manage your movie database.
 
 ## Project Structure
-
 - `lib/cli.py`: Main CLI script
-- `lib/helpers.py`: Helper functions for database operations
-- `lib/models.py`: ORM models
+- `lib/helpers.py`: Helper functions for CRUD operations
+- `lib/db/models.py`: SQLAlchemy ORM models
+- `lib/db/seed.py`: Script to seed the database with initial data
 - `lib/database.py`: Database setup
-- `lib/seed.py`: (Optional) Script to seed the database with test data
+- `alembic/`: Alembic migration scripts
+- `Pipfile`: Dependency management
 
 ## Example Workflow
-
-1. Start the CLI and select an option from the menu.
-2. Enter required information (e.g., movie title, year, director ID).
-3. The CLI validates input and performs the requested action.
-4. Results are displayed in a human-readable format.
+- List all movies
+- Add a new movie (provide title, year, director, genre, actors)
+- Update or delete records
+- List directors, genres, and actors
 
 ## Requirements
-
-- Python 3.8
+- Python 3.8+
 - SQLAlchemy
 - Alembic
 - Pipenv
 
-## Alembic Migrations
+## Migrations
+Alembic is used for database migrations. Run:
+```bash
+alembic upgrade head
+```
+to apply migrations.
 
-Alembic is used to manage database migrations. See `alembic/` for migration scripts.
+## Seeding Data
+To add initial data, run:
+```bash
+python lib/db/seed.py
+```
 
 ## License
+MIT License
 
-See LICENSE for details.
+## Author
+Reggan44
 
 ## Learning Goals
 
