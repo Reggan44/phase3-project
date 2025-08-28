@@ -1,6 +1,6 @@
-from lib.models import Movie, Director, Genre, Actor
+from lib.db.models import Movie, Director, Genre, Actor
 
-# Movie CRUD functionality
+# Movie CRUD stuff
 def create_movie(session, title, year, director, genre, actors):
 	movie = Movie(title=title, year=year, director=director, genre=genre, actors=actors)
 	session.add(movie)
@@ -34,7 +34,7 @@ def delete_movie(session, movie_id):
 		return True
 	return False
 
-# Director CRUD functionulity
+# Director CRUD stuff (spelling lol)
 def create_director(session, name):
 	director = Director(name=name)
 	session.add(director)
@@ -59,52 +59,6 @@ def delete_director(session, director_id):
 		return True
 	return False
 
-# Genre CRUD functionality
+# Genre CRUD stuff
 def create_genre(session, name):
 	genre = Genre(name=name)
-	session.add(genre)
-	session.commit()
-	return genre
-
-def get_all_genres(session):
-	return session.query(Genre).all()
-
-def update_genre(session, genre_id, name=None):
-	genre = session.query(Genre).get(genre_id)
-	if genre and name is not None:
-		genre.name = name
-		session.commit()
-	return genre
-
-def delete_genre(session, genre_id):
-	genre = session.query(Genre).get(genre_id)
-	if genre:
-		session.delete(genre)
-		session.commit()
-		return True
-	return False
-
-# Actor CRUD functionality
-def create_actor(session, name):
-	actor = Actor(name=name)
-	session.add(actor)
-	session.commit()
-	return actor
-
-def get_all_actors(session):
-	return session.query(Actor).all()
-
-def update_actor(session, actor_id, name=None):
-	actor = session.query(Actor).get(actor_id)
-	if actor and name is not None:
-		actor.name = name
-		session.commit()
-	return actor
-
-def delete_actor(session, actor_id):
-	actor = session.query(Actor).get(actor_id)
-	if actor:
-		session.delete(actor)
-		session.commit()
-		return True
-	return False

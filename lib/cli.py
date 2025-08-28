@@ -1,6 +1,6 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from lib.models import Movie, Director, Genre, Actor, Base
+from lib.db.models import Movie, Director, Genre, Actor, Base
 import lib.helpers as helpers
 
 engine = create_engine('sqlite:///movies.db')
@@ -8,166 +8,203 @@ Session = sessionmaker(bind=engine)
 session = Session()
 
 def main():
-	while True:
-		print("\nPlease select an option:")
-		print("0. Exit the program")
-		print("1. List all movies")
-		print("2. Find movie by title")
-		print("3. Find movie by id")
-		print("4. Create movie")
-		print("5. Update movie")
-		print("6. Delete movie")
-		print("7. List all directors")
-		print("8. Find director by name")
-		print("9. Find director by id")
-		print("10. Create director")
-		print("11. Update director")
-		print("12. Delete director")
-		print("13. List all genres")
-		print("14. Find genre by name")
-		print("15. Find genre by id")
-		print("16. Create genre")
-		print("17. Update genre")
-		print("18. Delete genre")
-		print("19. List all actors")
-		print("20. Find actor by name")
-		print("21. Find actor by id")
-		print("22. Create actor")
-		print("23. Update actor")
-		print("24. Delete actor")
-		choice = input("> ")
+	# tuple for result + status, just for fun
+	last_action: tuple = (None, None)
 
+	# dict for menu stuff
+	menu_dict = {
+		"0": "Exit the program",
+		"1": "List all movies",
+		"2": "Find movie by title",
+		"3": "Find movie by id",
+		"4": "Create movie",
+		"5": "Update movie",
+		"6": "Delete movie",
+		"7": "List all directors",
+		"8": "Find director by name",
+		"9": "Find director by id",
+		"10": "Create director",
+		"11": "Update director",
+		"12": "Delete director",
+		"13": "List all genres",
+		"14": "Find genre by name",
+		"15": "Find genre by id",
+		"16": "Create genre",
+		"17": "Update genre",
+		"18": "Delete genre",
+		"19": "List all actors",
+		"20": "Find actor by name",
+		"21": "Find actor by id",
+		"22": "Create actor",
+		"23": "Update actor",
+		"24": "Delete actor"
+	}
+
+	while True:
+		print("Please select an option:")
+		for key, desc in menu_dict.items():
+			print(f"{key}. {desc}")
+		choice = input("> ")
+		if not choice.isdigit() or choice not in menu_dict:
+			print("Invalid input. Please enter a number from the menu.")
+			continue
 		if choice == "0":
 			print("Goodbye!")
+			last_action = ("exit", True)  # tuple, see above
 			break
-		elif choice == "1":
+		if choice == "1":
 			movies = helpers.get_all_movies(session)
 			for m in movies:
 				print(f"{m.id}: {m.title} ({m.year}) - Director: {m.director.name}, Genre: {m.genre.name}, Actors: {', '.join(a.name for a in m.actors)}")
-		elif choice == "2":
+			last_action = ("list_movies", len(movies))  # tuple, see above
+		if choice == "2":
 			title = input("Enter movie title: ")
 			movies = session.query(Movie).filter(Movie.title.ilike(f"%{title}%")).all()
 			for m in movies:
 				print(f"{m.id}: {m.title} ({m.year})")
-		elif choice == "3":
-			movie_id = int(input("Enter movie id: "))
+		if choice == "3":
+			movie_id_input = input("Enter movie id: ")
+			if not movie_id_input.isdigit():
+				print("Invalid movie id. Please enter a valid integer.")
+				continue
+			movie_id = int(movie_id_input)
 			movie = session.query(Movie).get(movie_id)
 			if movie:
 				print(f"{movie.id}: {movie.title} ({movie.year})")
 			else:
 				print("Movie not found.")
-		elif choice == "4":
+		if choice == "4":
 			title = input("Title: ")
-			year = int(input("Year: "))
-			director_id = int(input("Director id: "))
-			genre_id = int(input("Genre id: "))
-			actor_ids = input("Actor ids (space separated): ").split()
+			year_input = input("Year: ")
+			if not year_input.isdigit():
+				print("Invalid year. Please enter a valid integer.")
+				continue
+			year = int(year_input)
+			director_id_input = input("Director id: ")
+			if not director_id_input.isdigit():
+				print("Invalid director id. Please enter a valid integer.")
+				continue
+			director_id = int(director_id_input)
+			genre_id_input = input("Genre id: ")
+			if not genre_id_input.isdigit():
+				print("Invalid genre id. Please enter a valid integer.")
+				continue
+			genre_id = int(genre_id_input)
+			actor_ids_input = input("Actor ids (space separated): ").split()
+			if not all(i.isdigit() for i in actor_ids_input):
+				print("Invalid actor ids. Please enter valid integers.")
+				continue
+			actor_ids = [int(i) for i in actor_ids_input]
 			director = session.query(Director).get(director_id)
 			genre = session.query(Genre).get(genre_id)
-			actors = session.query(Actor).filter(Actor.id.in_([int(i) for i in actor_ids])).all()
+			actors = session.query(Actor).filter(Actor.id.in_(actor_ids)).all()
 			movie = helpers.create_movie(session, title, year, director, genre, actors)
 			print(f"Created movie: {movie.title}")
-		elif choice == "5":
-			movie_id = int(input("Movie id: "))
+		if choice == "5":
+			movie_id_input = input("Movie id: ")
+			if not movie_id_input.isdigit():
+				print("Invalid movie id. Please enter a valid integer.")
+				continue
+			movie_id = int(movie_id_input)
 			title = input("New title (leave blank to keep current): ") or None
 			year = input("New year (leave blank to keep current): ")
-			year = int(year) if year else None
+			year = int(year) if year and year.isdigit() else None
 			director_id = input("New director id (leave blank to keep current): ")
-			director = session.query(Director).get(int(director_id)) if director_id else None
+			director = session.query(Director).get(int(director_id)) if director_id and director_id.isdigit() else None
 			genre_id = input("New genre id (leave blank to keep current): ")
-			genre = session.query(Genre).get(int(genre_id)) if genre_id else None
+			genre = session.query(Genre).get(int(genre_id)) if genre_id and genre_id.isdigit() else None
 			actor_ids = input("New actor ids (space separated, leave blank to keep current): ")
-			actors = session.query(Actor).filter(Actor.id.in_([int(i) for i in actor_ids.split()])) if actor_ids else None
+			actors = session.query(Actor).filter(Actor.id.in_([int(i) for i in actor_ids.split() if i.isdigit()])) if actor_ids else None
 			movie = helpers.update_movie(session, movie_id, title, year, director, genre, actors)
 			print(f"Updated movie: {movie.title if movie else 'Not found'}")
-		elif choice == "6":
+		if choice == "6":
 			movie_id = int(input("Movie id: "))
 			success = helpers.delete_movie(session, movie_id)
 			print("Deleted movie" if success else "Movie not found")
-		elif choice == "7":
+		if choice == "7":
 			directors = helpers.get_all_directors(session)
 			for d in directors:
 				print(f"{d.id}: {d.name}")
-		elif choice == "8":
+		if choice == "8":
 			name = input("Enter director name: ")
 			directors = session.query(Director).filter(Director.name.ilike(f"%{name}%")).all()
 			for d in directors:
 				print(f"{d.id}: {d.name}")
-		elif choice == "9":
+		if choice == "9":
 			director_id = int(input("Enter director id: "))
 			director = session.query(Director).get(director_id)
 			if director:
 				print(f"{director.id}: {director.name}")
 			else:
 				print("Director not found.")
-		elif choice == "10":
+		if choice == "10":
 			name = input("Director name: ")
 			director = helpers.create_director(session, name)
 			print(f"Created director: {director.name}")
-		elif choice == "11":
+		if choice == "11":
 			director_id = int(input("Director id: "))
 			name = input("New name: ")
 			director = helpers.update_director(session, director_id, name)
 			print(f"Updated director: {director.name if director else 'Not found'}")
-		elif choice == "12":
+		if choice == "12":
 			director_id = int(input("Director id: "))
 			success = helpers.delete_director(session, director_id)
 			print("Deleted director" if success else "Director not found")
-		elif choice == "13":
+		if choice == "13":
 			genres = helpers.get_all_genres(session)
 			for g in genres:
 				print(f"{g.id}: {g.name}")
-		elif choice == "14":
+		if choice == "14":
 			name = input("Enter genre name: ")
 			genres = session.query(Genre).filter(Genre.name.ilike(f"%{name}%")).all()
 			for g in genres:
 				print(f"{g.id}: {g.name}")
-		elif choice == "15":
+		if choice == "15":
 			genre_id = int(input("Enter genre id: "))
 			genre = session.query(Genre).get(genre_id)
 			if genre:
 				print(f"{genre.id}: {genre.name}")
 			else:
 				print("Genre not found.")
-		elif choice == "16":
+		if choice == "16":
 			name = input("Genre name: ")
 			genre = helpers.create_genre(session, name)
 			print(f"Created genre: {genre.name}")
-		elif choice == "17":
+		if choice == "17":
 			genre_id = int(input("Genre id: "))
 			name = input("New name: ")
 			genre = helpers.update_genre(session, genre_id, name)
 			print(f"Updated genre: {genre.name if genre else 'Not found'}")
-		elif choice == "18":
+		if choice == "18":
 			genre_id = int(input("Genre id: "))
 			success = helpers.delete_genre(session, genre_id)
 			print("Deleted genre" if success else "Genre not found")
-		elif choice == "19":
+		if choice == "19":
 			actors = helpers.get_all_actors(session)
 			for a in actors:
 				print(f"{a.id}: {a.name}")
-		elif choice == "20":
+		if choice == "20":
 			name = input("Enter actor name: ")
 			actors = session.query(Actor).filter(Actor.name.ilike(f"%{name}%")).all()
 			for a in actors:
 				print(f"{a.id}: {a.name}")
-		elif choice == "21":
+		if choice == "21":
 			actor_id = int(input("Enter actor id: "))
 			actor = session.query(Actor).get(actor_id)
 			if actor:
 				print(f"{actor.id}: {actor.name}")
 			else:
 				print("Actor not found.")
-		elif choice == "22":
+		if choice == "22":
 			name = input("Actor name: ")
 			actor = helpers.create_actor(session, name)
 			print(f"Created actor: {actor.name}")
-		elif choice == "23":
+		if choice == "23":
 			actor_id = int(input("Actor id: "))
 			name = input("New name: ")
 			actor = helpers.update_actor(session, actor_id, name)
 			print(f"Updated actor: {actor.name if actor else 'Not found'}")
-		elif choice == "24":
+		if choice == "24":
 			actor_id = int(input("Actor id: "))
 			success = helpers.delete_actor(session, actor_id)
 			print("Deleted actor" if success else "Actor not found")
@@ -179,7 +216,7 @@ if __name__ == "__main__":
 import argparse
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from lib.models import Base, Director, Genre, Actor, Movie
+from lib.db.models import Base, Director, Genre, Actor, Movie
 import lib.helpers as helpers
 
 engine = create_engine('sqlite:///movies.db')
@@ -190,7 +227,7 @@ def main():
 	parser = argparse.ArgumentParser(description='Movie App CLI')
 	subparsers = parser.add_subparsers(dest='command')
 
-	# Movie commands
+	# Movie stuff
 	movie_parser = subparsers.add_parser('movie')
 	movie_sub = movie_parser.add_subparsers(dest='action')
 
@@ -214,7 +251,7 @@ def main():
 	movie_delete = movie_sub.add_parser('delete')
 	movie_delete.add_argument('--id', type=int, required=True)
 
-	# Director commands
+	# Director stuff
 	director_parser = subparsers.add_parser('director')
 	director_sub = director_parser.add_subparsers(dest='action')
 
@@ -230,7 +267,7 @@ def main():
 	director_delete = director_sub.add_parser('delete')
 	director_delete.add_argument('--id', type=int, required=True)
 
-	# Genre commands
+	# Genre stuff
 	genre_parser = subparsers.add_parser('genre')
 	genre_sub = genre_parser.add_subparsers(dest='action')
 
@@ -246,7 +283,7 @@ def main():
 	genre_delete = genre_sub.add_parser('delete')
 	genre_delete.add_argument('--id', type=int, required=True)
 
-	# Actor commands
+	# Actor stuff
 	actor_parser = subparsers.add_parser('actor')
 	actor_sub = actor_parser.add_subparsers(dest='action')
 

@@ -1,0 +1,22 @@
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+.venv/
+env/
+venv/
+
+# Alembic migrations cache
+migrations/versions/*.pyc
+migrations/script.py.mako
+
+# SQLite database (if using SQLite)
+*.db
+
+# Environment variables
+.env
+
+# IDE / editor settings
+.vscode/
+.idea/

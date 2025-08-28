@@ -1,7 +1,7 @@
 
 
 
-from lib.models import Director, Genre, Actor, Movie, Base
+from lib.db.models import Director, Genre, Actor, Movie, Base
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -10,32 +10,32 @@ from sqlalchemy.orm import sessionmaker
 
 
 
-# add a SQLite database called 'movies.db'
+# make a db called 'movies.db'
 engine = create_engine('sqlite:///movies.db')
 
-# add tables
+# make tables
 Base.metadata.create_all(engine)
 
-# add a session
+# make a session
 Session = sessionmaker(bind=engine)
 session = Session()
 
-# add directors
+# put directors
 
-# add directors
+# put directors
 director1 = Director(name="Steven Spielberg")
 director2 = Director(name="Christopher Nolan")
 
-# add genres
+# put genres
 genre1 = Genre(name="Adventure")
 genre2 = Genre(name="Sci-Fi")
 
-# add actors
+# put actors
 actor1 = Actor(name="Tom Hanks")
 actor2 = Actor(name="Leonardo DiCaprio")
 actor3 = Actor(name="Morgan Freeman")
 
-# imput movies
+# put movies (imput lol)
 movie1 = Movie(
 	title="Jurassic Park",
 	year=1993,
@@ -59,4 +59,4 @@ session.add_all([
 ])
 session.commit()
 
-print("Sample data added!")
+print("data added!")

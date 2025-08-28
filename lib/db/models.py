@@ -10,6 +10,7 @@ movie_actor = Table(
 	'movie_actor', Base.metadata,
 	Column('movie_id', Integer, ForeignKey('movies.id')),
 	Column('actor_id', Integer, ForeignKey('actors.id'))
+	
 )
 
 
@@ -32,6 +33,7 @@ class Director(Base):
 	movies = relationship('Movie', back_populates='director')
 
 
+
 class Genre(Base):
 	__tablename__ = 'genres'
 	id = Column(Integer, primary_key=True)
@@ -43,3 +45,4 @@ class Actor(Base):
 	id = Column(Integer, primary_key=True)
 	name = Column(String, nullable=False)
 	movies = relationship('Movie', secondary=movie_actor, back_populates='actors')
+	
