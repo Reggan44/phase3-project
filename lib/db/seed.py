@@ -2,6 +2,7 @@
 
 
 from lib.db.models import Director, Genre, Actor, Movie, Base
+from faker import Faker
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -9,6 +10,8 @@ from sqlalchemy.orm import sessionmaker
 
 
 
+# Initialize Faker
+fake = Faker()
 
 # make a db called 'movies.db'
 engine = create_engine('sqlite:///movies.db')
